@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">androidbase</string>
+    <string name="app_name">Mon App</string>
+    <string name="button">Clic</string>
 </resources>
