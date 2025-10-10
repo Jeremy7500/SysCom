@@ -1,8 +1,11 @@
 package UPsay.decouverteAndroid;
 
+import static java.security.AccessController.getContext;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,5 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void dessiner(View view){
         setContentView(R.layout.gestionaire2);
+        // Use "this" or "getApplicationContext()" instead of the incorrect getContext()
+        Toast.makeText(this, "Ceci est un message Toast !", Toast.LENGTH_SHORT).show();
     }
 }

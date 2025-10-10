@@ -1,41 +1,78 @@
 package UPsay.decouverteAndroid;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class MonView extends View {
-    // Constructeur obligatoire pour une View
-    public MonView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    float xText, yText;
+    float tailleTexte = 0;
+
+
+
+    // Attributs pour le Timer
+    Handler timerHandler = new Handler();
+    Runnable updateTimerThread = new Runnable() {
+        public void run() {
+            tailleTexte += 1; // On augmente la taille
+            // Cette ligne redéclenche le timer dans 100ms
+            timerHandler.postDelayed(this, 100);
+            // Force le redessin de la vue, ce qui appelle onDraw()
+            invalidate();
+        }
+    };
+
+    // Method to set text coordinates
+    public void setXYText (float x, float y) {
+        xText = x;
+        yText = y;
     }
 
-    // C'est dans cette méthode que tous les dessins sont effectués
+    // Constructor where you should initialize your variables
+    public MonView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        // Initialize text coordinates here
+        setXYText(600, 600);
+        timerHandler.postDelayed(updateTimerThread, 10);
+    }
+
     @Override
-    public void onDraw (Canvas canvas) {
+    public void onDraw(Canvas canvas) {
         Paint p = new Paint();
 
-        // définir la couleur de l'objet de dessin
+        // Step 1: Draw the background
         p.setColor(Color.BLACK);
-        // définir son style en remplissage
-        p.setStyle(android.graphics.Paint.Style.FILL);
-        // dessiner un rectangle qui occupe la totalité du View
-        canvas.drawRect(0,0,getWidth(), getHeight(), p);
+        p.setStyle(Paint.Style.FILL);
+        canvas.drawRect(0, 0, getWidth(), getHeight(), p);
 
-        // définir une autre couleur pour dessiner un texte
+        // Step 2: Draw the image
+        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.nom);
+        canvas.drawBitmap(b, 200, 200, p);
+
+        // Step 3: Draw the text
         p.setColor(Color.GREEN);
-        // définir la taille du texte
-        p.setTextSize(100);
-        // définir le centre du texte comme étant son origine
-        p.setTextAlign(android.graphics.Paint.Align.CENTER);
-        // dessiner le texte en positionnant son origine au centre du View
+        //p.setTextSize(100);
+        p.setTextSize(tailleTexte);
+        p.setTextAlign(Paint.Align.CENTER);
         String texte = "Bonjour MONDE";
-        canvas.drawText(texte, getWidth()/2, getHeight()/2, p);
+        canvas.drawText(texte, xText, yText, p);
+    }
+
+    @Override
+    public boolean onTouchEvent (MotionEvent event){
+        xText = event.getX();
+        yText = event.getY();
+        invalidate(); // Force redraw
+        return true; // Return true to indicate the event was handled
     }
 }
